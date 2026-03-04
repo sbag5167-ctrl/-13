@@ -1,0 +1,93 @@
+3<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Golden Ratio Generator</title>
+    <style>
+        :root { --gold: #ffd700; --bg: #0d1117; --card: #161b22; --text: #c9d1d9; }
+        body { font-family: 'Pretendard', sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 20px; }
+        .container { width: 100%; max-width: 600px; background: var(--card); padding: 30px; border-radius: 20px; border: 1px solid #30363d; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+        h2 { text-align: center; color: var(--gold); margin-top: 0; }
+        .section { margin-bottom: 20px; }
+        label { display: block; font-size: 0.85rem; color: #8b949e; margin-bottom: 8px; font-weight: bold; }
+        input[type="text"] { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #30363d; background: #0d1117; color: #fff; box-sizing: border-box; }
+        .slider-group { display: flex; align-items: center; gap: 15px; margin-top: 5px; }
+        input[type="range"] { flex-grow: 1; accent-color: var(--gold); }
+        .weight-num { min-width: 35px; color: var(--gold); font-weight: bold; font-size: 0.9rem; }
+        .result-area { margin-top: 30px; border-top: 1px solid #30363d; padding-top: 20px; }
+        .result-box { background: #000; padding: 20px; border-radius: 12px; border: 1px solid var(--gold); font-family: 'Fira Code', monospace; line-height: 1.6; cursor: pointer; position: relative; }
+        .result-box::after { content: 'CLICK TO COPY'; position: absolute; top: 5px; right: 10px; font-size: 0.6rem; color: var(--gold); opacity: 0.6; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Golden Ratio Generator ✨</h2>
+    <div id="inputs">
+        <!-- 5가지 핵심 카테고리 -->
+        <div class="section" data-cat="Subject">
+            <label>1. 핵심 캐릭터 (Subject)</label>
+            <input type="text" placeholder="예: 1girl, solo, blonde hair" oninput="update()">
+            <div class="slider-group">
+                <input type="range" min="0.8" max="1.5" step="0.05" value="1.2" oninput="update()">
+                <span class="weight-num">1.2</span>
+            </div>
+        </div>
+        <div class="section" data-cat="Outfit">
+            <label>2. 의상 (Outfit)</label>
+            <input type="text" placeholder="예: school uniform, tie" oninput="update()">
+            <div class="slider-group">
+                <input type="range" min="0.8" max="1.5" step="0.05" value="1.0" oninput="update()">
+                <span class="weight-num">1.0</span>
+            </div>
+        </div>
+        <div class="section" data-cat="Background">
+            <label>3. 배경 (Background)</label>
+            <input type="text" placeholder="예: forest, sunlight" oninput="update()">
+            <div class="slider-group">
+                <input type="range" min="0.8" max="1.5" step="0.05" value="0.9" oninput="update()">
+                <span class="weight-num">0.9</span>
+            </div>
+        </div>
+        <div class="section" data-cat="Style">
+            <label>4. 화풍 (Style)</label>
+            <input type="text" placeholder="예: anime style, oil painting" oninput="update()">
+            <div class="slider-group">
+                <input type="range" min="0.8" max="1.5" step="0.05" value="1.1" oninput="update()">
+                <span class="weight-num">1.1</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="result-area">
+        <label>최종 황금비율 프롬프트</label>
+        <div class="result-box" id="finalResult" onclick="copy()">입력 대기 중...</div>
+    </div>
+</div>
+
+<script>
+    function update() {
+        let promptParts = [];
+        document.querySelectorAll('.section').forEach(sec => {
+            const text = sec.querySelector('input[type="text"]').value.trim();
+            const weight = sec.querySelector('input[type="range"]').value;
+            sec.querySelector('.weight-num').innerText = weight;
+            
+            if(text) {
+                // PixAI/SD 가중치 문법 적용
+                promptParts.push(`(${text}:${weight})`);
+            }
+        });
+        
+        const final = promptParts.length > 0 ? "masterpiece, best quality, " + promptParts.join(', ') : "내용을 입력하세요...";
+        document.getElementById('finalResult').innerText = final;
+    }
+
+    function copy() {
+        const text = document.getElementById('finalResult').innerText;
+        if(text.includes("입력하세요")) return;
+        navigator.clipboard.writeText(text);
+        alert("황금비율 프롬프트가 복사되었습니다!");
+    }
+</script>
+</body>
+</html>
